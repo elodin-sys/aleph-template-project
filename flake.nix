@@ -23,7 +23,7 @@
   };
 
   inputs = {
-    aleph.url = "github:elodin-sys/elodin?ref=7dba6c5&dir=aleph";
+    aleph.url = "github:elodin-sys/elodin?rev=99a8257bfb7972a742b85a4ab85fa1220e28a288&dir=aleph";
     flake-utils.follows = "aleph/flake-utils";
     nixpkgs.follows = "aleph/nixpkgs";
     self.submodules = true;
@@ -67,7 +67,7 @@
     #   - Aleph hardware and base modules (required)
     #   - Your custom modules (for services you create)
     ###########################################################################
-    nixosModules.default = {config, pkgs, ...}: {
+    nixosModules.default = {config, pkgs, lib, ...}: {
       imports = with aleph.nixosModules; [
         #######################################################################
         # Aleph Hardware Modules (required)
@@ -105,8 +105,19 @@
         overlays.default
       ];
 
-      system.stateVersion = "25.05";
+      system.stateVersion = "25.11";
       i18n.supportedLocales = [(config.i18n.defaultLocale + "/UTF-8")];
+
+      # Re-enable MAXN profile for full Orin NX performance.
+      services.nvpmodel = {
+        enable = true;
+        profileNumber = 0;
+      };
+
+      # nvpmodel may require reboot when switching profiles; force non-interactive mode.
+      systemd.services.nvpmodel.serviceConfig.ExecStart = lib.mkForce ''
+        /run/current-system/sw/bin/nvpmodel --force -f /etc/nvpmodel.conf -m 0
+      '';
 
       #########################################################################
       # Enable the Hello Service (Pattern 3 demonstration)

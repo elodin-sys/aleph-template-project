@@ -23,7 +23,7 @@
   };
 
   inputs = {
-    aleph.url = "github:elodin-sys/elodin?rev=99a8257bfb7972a742b85a4ab85fa1220e28a288&dir=aleph";
+    aleph.url = "github:elodin-sys/elodin?rev=80f226daf08f9fb9819adbe2e711e8eec2f83543&dir=aleph";
     flake-utils.follows = "aleph/flake-utils";
     nixpkgs.follows = "aleph/nixpkgs";
     self.submodules = true;
@@ -79,8 +79,8 @@
         #######################################################################
         # Aleph Networking Modules (optional - enable as needed)
         #######################################################################
-        # usb-eth     # USB ethernet gadget for direct connection
-        wifi          # WiFi support using iwd
+        usb-eth     # USB ethernet gadget for direct connection
+        wifi        # WiFi support using iwd
 
         #######################################################################
         # Aleph Tooling Modules (recommended)
@@ -88,6 +88,15 @@
         aleph-setup   # First-boot setup wizard for WiFi and user config
         aleph-base    # Sensible default configuration for development
         aleph-dev     # Development packages (CUDA, OpenCV, git, etc.)
+
+        #######################################################################
+        # Aleph Default Flight Software Modules
+        #######################################################################
+        sensor-fw # full sensor firmware: streams IMU/mag/baro data to elodin-db at 1 Mbaud
+        mekf # a basic attitude mekf that runs on the sensor data from the expansion board
+        elodin-db # brings in elodin-db as a default service
+        aleph-serial-bridge # pushes sensor data into elodin-db from the default expansion board firmware
+        tegrastats-bridge # pushes telemetry form the Orin SoC into elodin-db (i.e cpu usage, temps, etc)
 
         #######################################################################
         # Your Custom Modules
